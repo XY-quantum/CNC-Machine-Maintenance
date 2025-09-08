@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CNC Woodcutttin machine Maintenance Checklist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h2 { color: #2c3e50; }
+        .task { margin-bottom: 30px; }
+        label { font-weight: bold; }
+        textarea { width: 100%; height: 60px; margin-top: 5px; }
+        .preview { margin-top: 10px; max-width: 100%; height: auto; }
+        button { margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h2>MachineX Weekly To-do List</h2>
+
+    <div id="checklist"></div>
+
+    <script>
+        const tasks = [
+            "Check & top up compressor oil",
+            "Drain air dryer",
+            "Clean controller cabinet air filters",
+            "Clean vacuum pump filters",
+            "Forklift clean & check",
+            "Empty laster cutter trays",
+            "Clean and check laser cutter",
+            "Vacuum office floor",
+            "Tidy machine workstation",
+            "Clean machine drag chains",
+            "Clean machine rails",
+            "Clean machine racks & pinions",
+            "Clean machine tool changers",
+            "Clean tool holders & collets",
+            "Return tools to correct locations",
+            "Empty office bins",
+            "Clean kitchen area",
+            "Tidy up outside",
+        ];
+
+        const checklistDiv = document.getElementById("checklist");
+
+        tasks.forEach((task, index) => {
+            const taskDiv = document.createElement("div");
+            taskDiv.className = "task";
+            taskDiv.innerHTML = `
+                <label>
+                    <input type="checkbox" onchange="updateTimestamp(${index})"> ${task}
+                </label>
+                <br>
+                <small id="timestamp-${index}">Timestamp: Not completed</small>
+                <br>
+                <textarea placeholder="Notes..."></textarea>
+                <br>
+                <input type="file" accept="image/*" capture="environment" onchange="previewImage(event, ${index})">
+                <br>
+                <img id="preview-${index}" class="preview" src="" alt="Image preview">
+            `;
+            checklistDiv.appendChild(taskDiv);
+        });
+
+        function updateTimestamp(index) {
+            const timestamp = new Date().toLocaleString();
+            document.getElementById(`timestamp-${index}`).textContent = "Timestamp: " + timestamp;
+        }
+
+        function previewImage(event, index) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById(`preview-${index}`);
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>

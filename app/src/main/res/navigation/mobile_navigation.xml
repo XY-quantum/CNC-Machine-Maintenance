@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_assets">
+
+    <fragment
+        android:id="@+id/nav_assets"
+        android:name="cnc.woodcut.machine.maintenance.ui.machines.AssetsFragment"
+        android:label="Assets"
+        tools:layout="@layout/fragment_asset" />
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="cnc.woodcut.machine.maintenance.ui.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/nav_arassistant"
+        android:name="cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistantFragment"
+        android:label="AR Assistant"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="cnc.woodcut.machine.maintenance.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
