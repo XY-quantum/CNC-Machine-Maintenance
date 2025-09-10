@@ -32,6 +32,12 @@ android {
 }
 
 dependencies {
+    // Import the Firebase BoM
+    implementation (platform("com.google.firebase:firebase-bom:34.2.0"))
+    // When using the BoM, do not specify version in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+    // Chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     implementation libs.appcompat
     implementation libs.material
@@ -43,6 +49,7 @@ dependencies {
     implementation libs.navigation.ui
     implementation project(':OpenCV4120')
     implementation libs.work.runtime
+    implementation libs.firebase.firestore
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
