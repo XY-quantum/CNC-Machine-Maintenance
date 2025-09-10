@@ -32,6 +32,8 @@ android {
 }
 
 dependencies {
+    // Notification
+    implementation ("androidx.work:work-runtime:2.9.0")
     // Import the Firebase BoM
     implementation (platform("com.google.firebase:firebase-bom:34.2.0"))
     // When using the BoM, do not specify version in Firebase dependencies
