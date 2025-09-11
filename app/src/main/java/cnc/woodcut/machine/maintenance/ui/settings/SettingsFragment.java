@@ -1,9 +1,14 @@
 package cnc.woodcut.machine.maintenance.ui.settings;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,9 +18,12 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.concurrent.TimeUnit;
 
 import cnc.woodcut.machine.maintenance.R;
+import cnc.woodcut.machine.maintenance.databinding.ActivityMainBinding;
 
 /**
  * Settings:: Notifications
@@ -46,7 +54,7 @@ public class SettingsFragment extends Fragment {
 
         return view;
     }
-    /*-* Email notification */
+
 
     /*-* Scheduled Notification I */
     private void scheduleNotification() {
