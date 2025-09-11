@@ -17,7 +17,7 @@ public class NotificationWorker extends Worker {
     @Override
     public Result doWork() {
         NotificationUtils.sendNotification(getApplicationContext(),
-                "Reminder", "This is your scheduled notification.");
+                "Reminder", "MachineX scheduled maintenance notification.");
         return Result.success();
     }
 }

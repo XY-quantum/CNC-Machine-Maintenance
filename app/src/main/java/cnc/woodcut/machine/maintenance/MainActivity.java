@@ -1,7 +1,6 @@
 package cnc.woodcut.machine.maintenance;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.Menu;
 
@@ -66,11 +65,7 @@ public class MainActivity extends AppCompatActivity {
         // Using findViewById because NavigationView exists in different layout files
         // between w600dp and w1240dp
         NavigationView navView = findViewById(R.id.nav_view);
-        if (navView == null) {
-            // The navigation drawer already has the items including the items in the overflow menu
-            // We only inflate the overflow menu if the navigation drawer isn't visible
-            getMenuInflater().inflate(R.menu.overflow, menu);
-        }
+
         return result;
     }
 

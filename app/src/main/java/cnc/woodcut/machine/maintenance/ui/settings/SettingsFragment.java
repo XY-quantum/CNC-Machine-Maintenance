@@ -46,6 +46,8 @@ public class SettingsFragment extends Fragment {
 
         return view;
     }
+    /*-* Email notification */
+
     /*-* Scheduled Notification I */
     private void scheduleNotification() {
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(

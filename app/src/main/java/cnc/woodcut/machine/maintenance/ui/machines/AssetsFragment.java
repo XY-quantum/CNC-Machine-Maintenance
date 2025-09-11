@@ -29,10 +29,7 @@ import org.opencv.android.OpenCVLoader;
 
 import cnc.woodcut.machine.maintenance.R;
 import cnc.woodcut.machine.maintenance.databinding.FragmentAssetBinding;
-import cnc.woodcut.machine.maintenance.databinding.ItemAssetBinding;
 
-import java.util.Arrays;
-import java.util.List;
 /**
  *  The list of the CNC machines
  */
