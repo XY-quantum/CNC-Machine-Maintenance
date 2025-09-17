@@ -7,7 +7,15 @@
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnSharePdf"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:text="Save"
+        android:layout_gravity="bottom|end" />
+
+</FrameLayout>
 
     <!--
     xmlns:app="http://schemas.android.com/apk/res-auto"

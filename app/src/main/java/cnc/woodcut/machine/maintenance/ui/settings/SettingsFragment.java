@@ -3,6 +3,7 @@ package cnc.woodcut.machine.maintenance.ui.settings;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +19,12 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.concurrent.TimeUnit;
 
+import cnc.woodcut.machine.maintenance.MainActivity;
 import cnc.woodcut.machine.maintenance.R;
 import cnc.woodcut.machine.maintenance.databinding.ActivityMainBinding;
 
@@ -52,9 +55,24 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        /*-* Send email @ref::github.com/XY-quantum/ */
+        FloatingActionButton fabEmail = view.findViewById(R.id.fab_email);
+
+        fabEmail.setOnClickListener(v -> {
+            String subject = "MachineX_CHECKLIST_FILE";
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setType("text/plain");
+            emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
+
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MachineX Checklist File");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+            // start to send
+            startActivity(Intent.createChooser(emailIntent, "Send email..."));
+
+        });
+
         return view;
     }
-
 
     /*-* Scheduled Notification I */
     private void scheduleNotification() {

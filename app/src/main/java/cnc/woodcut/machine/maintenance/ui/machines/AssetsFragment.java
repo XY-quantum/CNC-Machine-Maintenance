@@ -2,9 +2,17 @@ package cnc.woodcut.machine.maintenance.ui.machines;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.print.PageRange;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintDocumentInfo;
+import android.print.PrintManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,23 +20,24 @@ import android.view.ViewGroup;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewFragment;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.webkit.WebViewClient;
+
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.io.File;
+import java.io.IOException;
+
 import cnc.woodcut.machine.maintenance.R;
-import cnc.woodcut.machine.maintenance.databinding.FragmentAssetBinding;
+
 
 /**
  *  The list of the CNC machines
@@ -49,7 +58,8 @@ public class AssetsFragment extends Fragment {
             Log.d("Check", "OpenCV not configured successfully");
         }
     }
-    private FragmentAssetBinding binding;
+    private File generatedPdfFile;
+    private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
     private static final int FILE_CHOOSER_REQUEST_CODE = 1001;
 
@@ -58,10 +68,20 @@ public class AssetsFragment extends Fragment {
         AssetsViewModel assetsViewModel =
                 new ViewModelProvider(this).get(AssetsViewModel.class);
 
-        binding = FragmentAssetBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+
+
         /*---------For the "choose file"------------------*/
         View view = inflater.inflate(R.layout.fragment_asset, container, false);
+        // Save file button
+        Button btnShare = view.findViewById(R.id.btnSharePdf);
+        btnShare.setOnClickListener(v -> {
+            if (generatedPdfFile != null && generatedPdfFile.exists()) {
+                sharePdfFile(generatedPdfFile);
+            } else {
+                Toast.makeText(requireContext(), "PDF not generated yet", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         WebView webView = view.findViewById(R.id.webview);
 
         webView.getSettings().setJavaScriptEnabled(true);
@@ -80,37 +100,41 @@ public class AssetsFragment extends Fragment {
                     AssetsFragment.this.filePathCallback = null;
                     return false;
                 }
+                createPdfFromWebView(webView);
                 return true;
             }
-
         });
 
         webView.loadUrl("file:///android_asset/cnc_maintenance_camera_app.html");
 
         return view;
-
-    }
-    /*---------For the "choose file"------------------*/
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
-            if (filePathCallback != null) {
-                Uri[] results = null;
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    results = new Uri[]{(data.getData())};
-                }
-                filePathCallback.onReceiveValue(results);
-                filePathCallback = null;
-            }
-        }
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
+    private void createPdfFromWebView(WebView webView) {
+        String fileName = "output_" + System.currentTimeMillis() + ".pdf";
+        File file = new File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName);
+        generatedPdfFile = file;
 
+        webView.post(() -> {
+            PrintManager printManager = (PrintManager) requireContext().getSystemService(Context.PRINT_SERVICE);
+            printManager.print("Document", new CustomPrintDocumentAdapter(requireContext(), webView, file), null);
+            Toast.makeText(requireContext(), "PDF saved: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void sharePdfFile(File file) {
+        Uri uri = FileProvider.getUriForFile(
+                requireContext(),
+                requireContext().getPackageName() + ".fileprovider",
+                file
+        );
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("application/pdf");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        startActivity(Intent.createChooser(shareIntent, "Share PDF using"));
+    }
 
 }
