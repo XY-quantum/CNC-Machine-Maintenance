@@ -19,76 +19,41 @@
 
 package cnc.woodcut.machine.maintenance.ui.arassistant;
 
-import static android.content.ContentValues.TAG;
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.media.Image;
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import cnc.woodcut.machine.maintenance.R;
 
 
 // ARCore library
-import com.google.ar.core.DepthPoint;
 import com.google.ar.core.HitResult;
-import com.google.ar.core.LightEstimate;
 import com.google.ar.core.Plane;
-import com.google.ar.core.Point;
-import com.google.ar.core.PointCloud;
 import com.google.ar.core.Pose;
-import com.google.ar.core.TrackingFailureReason;
 import com.google.ar.core.TrackingState;
 import com.google.ar.core.exceptions.*;
 import com.google.ar.core.Anchor;
-import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
-import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.InstantPlacementPoint;
 import com.google.ar.core.Session;
 import com.google.ar.core.Trackable;
 //
-import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import org.jspecify.annotations.Nullable;
-import org.opencv.android.OpenCVLoader;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -155,7 +120,7 @@ public class ARAssistantFragment extends Fragment  {
          glSurfaceView.setPreserveEGLContextOnPause(true);
 
          Log.e("AR Assistant","AR Assistant being CALLED");
-         SetARView();
+         //SetARView();
 
          return view;
     }
@@ -187,6 +152,11 @@ public class ARAssistantFragment extends Fragment  {
             glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         }
         try {
+            // Check camera permission
+            if (!hasCameraPermission()) {
+                requestCameraPermission();
+                return;
+            }
             arSession.resume();
         } catch (CameraNotAvailableException e) {
             Toast.makeText(getContext(), "Camera not available", Toast.LENGTH_LONG).show();
@@ -203,6 +173,25 @@ public class ARAssistantFragment extends Fragment  {
         }
     }
 
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestCameraPermission() {
+        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (hasCameraPermission()) {
+            onResume(); // Try again now that we have permission
+        } else {
+            Toast.makeText(getContext(), "Camera permission is needed for AR", Toast.LENGTH_LONG).show();
+        }
+    }
     public class ARRenderer implements GLSurfaceView.Renderer {
 
         private final Session session;

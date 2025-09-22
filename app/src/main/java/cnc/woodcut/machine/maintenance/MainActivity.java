@@ -8,8 +8,10 @@ import android.view.Menu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.ar.sceneform.ux.ArFragment;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -20,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.opencv.android.OpenCVLoader;
 
 import cnc.woodcut.machine.maintenance.databinding.ActivityMainBinding;
+import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistant;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
@@ -73,15 +76,27 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
-
+    // For AR Assistant
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_arassistant) {
+               NavController navController = Navigation.findNavController(this, R.id.glsurfaceview);
+               navController.navigate(R.id.glsurfaceview);
+
+        }
+
+        Log.e("onOptionsItemSelected","BE CALLED");
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*@Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_settings) {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_settings);
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public boolean onSupportNavigateUp() {
