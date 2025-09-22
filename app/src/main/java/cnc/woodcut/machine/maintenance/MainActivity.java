@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.opencv.android.OpenCVLoader;
 
 import cnc.woodcut.machine.maintenance.databinding.ActivityMainBinding;
-import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistant;
+import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistantFragment;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
@@ -79,24 +79,15 @@ public class MainActivity extends AppCompatActivity {
     // For AR Assistant
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_arassistant) {
-               NavController navController = Navigation.findNavController(this, R.id.glsurfaceview);
+        if (item.getItemId() == R.id.glsurfaceview) {
+               NavController navController = Navigation.findNavController(this, R.id.nav_arassistant);
                navController.navigate(R.id.glsurfaceview);
 
         }
-
         Log.e("onOptionsItemSelected","BE CALLED");
         return super.onOptionsItemSelected(item);
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_settings) {
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-            navController.navigate(R.id.nav_settings);
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @Override
     public boolean onSupportNavigateUp() {
