@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
     // For AR Assistant
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.glsurfaceview) {
+        if (item.getItemId() == R.id.surfaceview) {
                NavController navController = Navigation.findNavController(this, R.id.nav_arassistant);
-               navController.navigate(R.id.glsurfaceview);
+               navController.navigate(R.id.surfaceview);
 
         }
         Log.e("onOptionsItemSelected","BE CALLED");
