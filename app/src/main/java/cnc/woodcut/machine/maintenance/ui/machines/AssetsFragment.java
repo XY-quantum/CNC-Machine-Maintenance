@@ -1,40 +1,36 @@
 package cnc.woodcut.machine.maintenance.ui.machines;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
-import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
-import android.print.PrintDocumentInfo;
 import android.print.PrintManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import cnc.woodcut.machine.maintenance.R;
 
@@ -65,76 +61,64 @@ public class AssetsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AssetsViewModel assetsViewModel =
-                new ViewModelProvider(this).get(AssetsViewModel.class);
-
-
+        //AssetsViewModel assetsViewModel =
+          //      new ViewModelProvider(this).get(AssetsViewModel.class);
 
         /*---------For the "choose file"------------------*/
         View view = inflater.inflate(R.layout.fragment_asset, container, false);
-        // Save file button
-        Button btnShare = view.findViewById(R.id.btnSharePdf);
-        btnShare.setOnClickListener(v -> {
-            if (generatedPdfFile != null && generatedPdfFile.exists()) {
-                sharePdfFile(generatedPdfFile);
-            } else {
-                Toast.makeText(requireContext(), "PDF not generated yet", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        WebView webView = view.findViewById(R.id.webview);
-
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setAllowContentAccess(true);
-
-        webView.setWebChromeClient( new WebChromeClient(){
-            @Override
-            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
-                                             FileChooserParams fileChooserParams) {
-                AssetsFragment.this.filePathCallback = filePathCallback;
-                Intent intent = fileChooserParams.createIntent();
-                try {
-                    startActivityForResult(intent, FILE_CHOOSER_REQUEST_CODE);
-                } catch (ActivityNotFoundException e){
-                    AssetsFragment.this.filePathCallback = null;
-                    return false;
-                }
-                createPdfFromWebView(webView);
-                return true;
-            }
-        });
+        webView = view.findViewById(R.id.webview);
+        setupWebView();
 
         webView.loadUrl("file:///android_asset/cnc_maintenance_camera_app.html");
-
         return view;
     }
 
-    private void createPdfFromWebView(WebView webView) {
-        String fileName = "output_" + System.currentTimeMillis() + ".pdf";
-        File file = new File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName);
-        generatedPdfFile = file;
+    @SuppressLint("SetJavaScriptEnabled")
+    private void setupWebView(){
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
 
-        webView.post(() -> {
-            PrintManager printManager = (PrintManager) requireContext().getSystemService(Context.PRINT_SERVICE);
-            printManager.print("Document", new CustomPrintDocumentAdapter(requireContext(), webView, file), null);
-            Toast.makeText(requireContext(), "PDF saved: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
-        });
+        webView.addJavascriptInterface(new WebAppInterface(getContext()), "AndroidInterface");
     }
 
-    private void sharePdfFile(File file) {
-        Uri uri = FileProvider.getUriForFile(
-                requireContext(),
-                requireContext().getPackageName() + ".fileprovider",
-                file
-        );
+    // JavaScript Interface for the .html
+    public class WebAppInterface {
+        public final Context mContext;
 
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("application/pdf");
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        public WebAppInterface(Context pcontext) {
+            this.mContext = pcontext;
+        }
 
-        startActivity(Intent.createChooser(shareIntent, "Share PDF using"));
+        @JavascriptInterface
+        public void savePDF() {
+            Log.d("WebView", "savePDF called from HTML");
+            // Already being successfully called
+
+            Date currentDate = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss",Locale.getDefault());
+            String timestamp = dateFormat.format(currentDate);
+            String fileName  = "MachineX_Report_" + timestamp+".pdf";
+            File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName);
+            // Print PDF
+            PrintManager printManager = (PrintManager) mContext.getSystemService(Objects.requireNonNull(Context.PRINT_SERVICE));
+            if (printManager != null) {
+                String jobName = mContext.getString(R.string.app_name) + "MachineXMaintenanceReport_" + System.currentTimeMillis();
+
+                // Create PDF file that captures the current DOM state
+                // including all user input (text, timestamps, and the base64 image data).
+                PrintDocumentAdapter printAdapter = webView.createPrintDocumentAdapter(jobName);
+
+                //Start the print job, which opens the system's "Save to PDF" dialog.
+                printManager.print(jobName, printAdapter, new PrintAttributes.Builder().build());
+                Log.d("FeedbackfromAndroidInterface","PDF saved path is "+file.getAbsolutePath());
+                Toast.makeText(mContext,"PDF saved: "+file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                // IMPORTANT: Re-load the original HTML after printing to reset the form and interactive elements
+                webView.loadUrl("file:///android_asset/cnc_maintenance_camera_app.html");
+            } else {
+                Toast.makeText(mContext,"Printing Service UnAvailiable", Toast.LENGTH_LONG).show();
+            }
+        }
     }
-
 }

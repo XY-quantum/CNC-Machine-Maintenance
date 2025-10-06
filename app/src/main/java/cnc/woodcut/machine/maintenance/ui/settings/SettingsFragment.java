@@ -64,8 +64,9 @@ public class SettingsFragment extends Fragment {
             emailIntent.setType("text/plain");
             emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
 
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MachineX Checklist File");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MachineX Checklist Report");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "MachineX Report PDF File Attached");
+
             // start to send
             startActivity(Intent.createChooser(emailIntent, "Send email..."));
 
