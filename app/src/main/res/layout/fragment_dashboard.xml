@@ -21,7 +21,7 @@
             android:id="@+id/statusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="System Status: Unknown"
+            android:text="Machine Running Status: Unknown"
             android:textSize="18sp"
             android:padding="8dp" />
 
