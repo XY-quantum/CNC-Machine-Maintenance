@@ -4,8 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.DashboardFragment">
+    tools:context=".ui.dashboard.DashboardFragment"
+    android:gravity="center"
+    android:layout_marginBottom="16dp">
 
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,7 +39,26 @@
             android:text="Refresh Dashboard"
             android:layout_gravity="center"
             android:layout_marginTop="16dp" />
+        <!-- Mock running machine data -->
+        <TextView
+            android:id="@+id/averageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weekly Average: 0 min"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"/>
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"/>
+
+        <Button
+            android:id="@+id/btnMonthly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Monthly"
+            android:layout_marginStart="16dp"/>
     </LinearLayout>
-
-
+</ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
