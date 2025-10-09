@@ -32,15 +32,14 @@ android {
 }
 
 dependencies {
-    // Import the Firebase BoM
-    implementation (platform("com.google.firebase:firebase-bom:34.2.0"))
-    // When using the BoM, do not specify version in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.guava:guava:32.1.2-android") // or latest version
     // Chart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     //ARCore
-    implementation("com.google.ar.sceneform:core:1.17.1")
     implementation("com.google.ar:core:1.50.0")
+    // Obj - a simple Wavefront OBJ file loader
+    // https://github.com/javagl/Obj
+    implementation 'de.javagl:obj:0.4.0'
 
     implementation libs.appcompat
     implementation libs.material

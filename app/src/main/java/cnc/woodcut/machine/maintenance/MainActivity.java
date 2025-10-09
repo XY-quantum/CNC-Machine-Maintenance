@@ -10,6 +10,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -20,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.opencv.android.OpenCVLoader;
 
 import cnc.woodcut.machine.maintenance.databinding.ActivityMainBinding;
+import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistantFragment;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
@@ -73,9 +76,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_settings) {
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-            navController.navigate(R.id.nav_settings);
+        if (item.getItemId() == R.id.nav_arassistant) {
+            // Load ARAssistantFragment into the activity
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            ARAssistantFragment arAssistantFragment = new ARAssistantFragment();
+            transaction.replace(R.id.nav_arassistant, arAssistantFragment);
+            transaction.commit();
         }
         return super.onOptionsItemSelected(item);
     }
