@@ -256,11 +256,6 @@ public abstract class ARAssistantRenderer implements SampleRender.Renderer {
         }
     }
 
-    @Override
-    public void onSurfaceChanged(SampleRender render, int width, int height) {
-        displayRotationHelper.onSurfaceChanged(width, height);
-        virtualSceneFramebuffer.resize(width, height);
-    }
 }//__End_ARAssistantRenderer
 /**
  * Associates an Anchor with the trackable it was attached to. This is used to be able to check
