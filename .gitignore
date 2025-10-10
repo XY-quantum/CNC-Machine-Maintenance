@@ -14,4 +14,4 @@
 .externalNativeBuild
 .cxx
 .local.properties
-.OpenCV4120/build/
+/OpenCV4120/build/
