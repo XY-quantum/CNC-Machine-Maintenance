@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
             NavigationUI.setupWithNavController(bottomNavigationView, navController);
         }
         // Dynamically load ARFragment when AR layout is called
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+        /*navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() == R.id.nav_arassistant) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_img2ar, new ARAssistantFragment());
                 transaction.commit();
             }
-        });
+        });*/
     }
 
     @Override
