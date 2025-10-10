@@ -13,5 +13,5 @@
 /captures
 .externalNativeBuild
 .cxx
-local.properties
-OpenCV4120/build/
+.local.properties
+.OpenCV4120/build/
