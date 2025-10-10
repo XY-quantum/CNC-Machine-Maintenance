@@ -1,25 +1,20 @@
 package cnc.woodcut.machine.maintenance;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.Menu;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-import com.google.ar.sceneform.ux.ArFragment;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.opencv.android.OpenCVLoader;
 
 import cnc.woodcut.machine.maintenance.databinding.ActivityMainBinding;
 import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistantFragment;
@@ -35,10 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        if (binding.appBarMain.fab != null) {
-            binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).setAnchorView(R.id.fab).show());
-        }
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
         assert navHostFragment != null;
         NavController navController = navHostFragment.getNavController();
@@ -61,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
             NavigationUI.setupWithNavController(bottomNavigationView, navController);
         }
+        // Dynamically load ARFragment when AR layout is called
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.nav_arassistant) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_img2ar, new ARAssistantFragment());
+                transaction.commit();
+            }
+        });
     }
 
     @Override
@@ -76,19 +76,15 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
-    // For AR Assistant
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.surfaceview) {
-               NavController navController = Navigation.findNavController(this, R.id.nav_arassistant);
-               navController.navigate(R.id.surfaceview);
-
+        if (item.getItemId() == R.id.nav_settings) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            navController.navigate(R.id.nav_settings);
         }
-        Log.e("onOptionsItemSelected","BE CALLED");
         return super.onOptionsItemSelected(item);
     }
-
-
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
