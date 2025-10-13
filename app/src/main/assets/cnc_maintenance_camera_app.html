@@ -1,81 +1,179 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CNC Woodcutttin machine Maintenance Checklist</title>
+    <title>CNC Woodcutting Machine Maintenance Checklist</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         h2 { color: #2c3e50; }
-        .task { margin-bottom: 30px; }
+        .task { margin-bottom: 30px; border-bottom: 1px solid #ccc; padding-bottom: 15px; }
         label { font-weight: bold; }
-        textarea { width: 100%; height: 60px; margin-top: 5px; }
-        .preview { margin-top: 10px; max-width: 100%; height: auto; }
+        textarea { width: 100%; height: 60px; margin-top: 5px; border: 1px solid #ccc; padding: 5px; }
+        .preview { margin-top: 10px; max-width: 100%; height: auto; border: 1px solid #ddd; display: block; }
         button { margin-top: 5px; }
+        /* FIX 3: Use @media print to control visibility */
+        @media print {
+            .interactive-input, .fixed-bottom-right-btn, .file-input-container {
+                display: none !important;
+            }
+            /* Ensure text area content is visible in print (hiding the interactive border) */
+            textarea {
+                border: none !important;
+                height: auto !important;
+                /* Print the content using the -webkit-print-color-adjust property (WebView specific) */
+                -webkit-print-color-adjust: exact;
+            }
+            /* Convert image to visible element for printing */
+            .preview {
+                display: block !important;
+            }
+        }
+    </style>
+    <style>
+        /* CSS to position the button */
+        .fixed-bottom-right-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
-    <h2>MachineX Weekly To-do List</h2>
+<h2>CNC Woodcutting Machine Maintenance Report</h2>
+<p><strong>Report Date:</strong> <span id="report-date">N/A</span></p>
 
-    <div id="checklist"></div>
+<div id="checklist"></div>
+<button onclick="saveToPDF()" class="fixed-bottom-right-btn">Generate & Save PDF 📄</button>
+<script type='text/javascript'>
+    console.log("JavaScript is working!");
+    const tasks = [
+        "Check & top up compressor oil",
+           "Drain air dryer",
+           "Clean controller cabinet air filters",
+           "Clean vacuum pump filters",
+           "Forklift clean & check",
+           "Empty laster cutter trays",
+           "Clean and check laser cutter",
+           "Vacuum office floor",
+           "Tidy machine workstation",
+           "Clean machine drag chains",
+           "Clean machine rails",
+           "Clean machine racks & pinions",
+           "Clean machine tool changers",
+           "Clean tool holders & collets",
+           "Return tools to correct locations",
+           "Empty office bins",
+           "Clean kitchen area",
+           "Tidy up outside",
+    ];
 
-    <script>
-        const tasks = [
-            "Check & top up compressor oil",
-            "Drain air dryer",
-            "Clean controller cabinet air filters",
-            "Clean vacuum pump filters",
-            "Forklift clean & check",
-            "Empty laster cutter trays",
-            "Clean and check laser cutter",
-            "Vacuum office floor",
-            "Tidy machine workstation",
-            "Clean machine drag chains",
-            "Clean machine rails",
-            "Clean machine racks & pinions",
-            "Clean machine tool changers",
-            "Clean tool holders & collets",
-            "Return tools to correct locations",
-            "Empty office bins",
-            "Clean kitchen area",
-            "Tidy up outside",
-        ];
+    const checklistDiv = document.getElementById("checklist");
 
-        const checklistDiv = document.getElementById("checklist");
-
-        tasks.forEach((task, index) => {
-            const taskDiv = document.createElement("div");
-            taskDiv.className = "task";
-            taskDiv.innerHTML = `
+    tasks.forEach((task, index) => {
+        const taskDiv = document.createElement("div");
+        taskDiv.className = "task";
+        taskDiv.id = `task-container-${index}`;
+        taskDiv.innerHTML = `
+            <div class="task-content">
                 <label>
-                    <input type="checkbox" onchange="updateTimestamp(${index})"> ${task}
+                    <input type="checkbox" id="check-${index}" class="interactive-input" onchange="updateTimestamp(${index})"> ${task}
                 </label>
+                <p class="status-placeholder" style="display:none;"></p>
                 <br>
                 <small id="timestamp-${index}">Timestamp: Not completed</small>
                 <br>
-                <textarea placeholder="Notes..."></textarea>
+                <textarea class="interactive-input notes-area" placeholder="Notes..."></textarea>
                 <br>
-                <input type="file" accept="image/*" capture="environment" onchange="previewImage(event, ${index})">
-                <br>
-                <img id="preview-${index}" class="preview" src="" alt="Image preview">
-            `;
-            checklistDiv.appendChild(taskDiv);
+                <div class="interactive-input file-input-container">
+                    <input type="file" accept="image/*" capture="environment" onchange="previewImage(event, ${index})">
+                </div>
+                <img id="preview-${index}" class="preview" src="" alt="Image preview" style="display:none;">
+            </div>
+        `;
+        checklistDiv.appendChild(taskDiv);
+    });
+
+    function updateTimestamp(index) {
+        const checkbox = document.getElementById(`check-${index}`);
+        const timestampEl = document.getElementById(`timestamp-${index}`);
+        if (checkbox.checked) {
+            const timestamp = new Date().toLocaleString();
+            timestampEl.textContent = "Timestamp: " + timestamp;
+        } else {
+            timestampEl.textContent = "Timestamp: Not completed";
+        }
+    }
+
+    function previewImage(event, index) {
+        const output = document.getElementById(`preview-${index}`);
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            // FIX 1: Ensure image is displayed immediately upon load
+            reader.onload = function(){
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+             output.style.display = 'none';
+             output.src = '';
+        }
+    }
+
+    // --- PDF SAVE FUNCTION ---
+    function saveToPDF() {
+        console.log("saveToPDF is being called.");
+        // 1. Set the final report date
+        document.getElementById('report-date').textContent = new Date().toLocaleDateString();
+
+        // 2. Prepare the DOM for printing
+        tasks.forEach((task, index) => {
+            const container = document.getElementById(`task-container-${index}`);
+            const checkbox = document.getElementById(`check-${index}`);
+            const statusPlaceholder = container.querySelector('.status-placeholder');
+            const notesArea = container.querySelector('.notes-area');
+
+            // a. Set the final status text
+            statusPlaceholder.innerHTML = `<strong>Status:</strong> ${checkbox.checked ? '✅ Completed' : '❌ Pending'}`;
+            statusPlaceholder.style.display = 'block';
+
+            // c. Hide the interactive checkbox/label
+            container.querySelector('label').style.display = 'none';
+
+            const imagePreview = document.getElementById('preview-${index}');
+            if (imagePreview && imagePreview.src) {
+                imagePreview.style.display = 'block';
+            }
+            // OPTIONAL: Explicitly setting styles for print view is generally better
+            // but for simplicity, we rely on the @media print CSS block.
         });
 
-        function updateTimestamp(index) {
-            const timestamp = new Date().toLocaleString();
-            document.getElementById(`timestamp-${index}`).textContent = "Timestamp: " + timestamp;
-        }
+        // 3. Hide the save button (will be un-hidden on page reload)
+        document.querySelector('.fixed-bottom-right-btn').style.display = 'none';
 
-        function previewImage(event, index) {
-            const reader = new FileReader();
-            reader.onload = function(){
-                const output = document.getElementById(`preview-${index}`);
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    </script>
+        // FIX 2: Delay the print command to allow the DOM changes to render
+        setTimeout(() => {
+            if (window.AndroidInterface && window.AndroidInterface.savePDF) {
+                 console.log("AndroidInterface is being activated.");
+                 window.AndroidInterface.savePDF();
+            } else {
+                console.log("Android Interface not available.");
+                alert("Android Interface not available. Using browser print.");
+                window.print();
+            }
+        }, 500); // 500ms delay should be sufficient to process the DOM changes
+    }
+</script>
 </body>
 </html>

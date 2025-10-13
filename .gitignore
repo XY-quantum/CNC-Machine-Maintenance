@@ -1,6 +1,9 @@
 *.iml
 .gradle
+/OpenCV4120
+/OpenCV4120/build
 /local.properties
+/.idea
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
