@@ -29,13 +29,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.helpers.DepthSettings;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.helpers.DisplayRotationHelper;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.helpers.InstantPlacementSettings;
-import cnc.woodcut.machine.maintenance.ui.arassistant.common.helpers.SnackbarHelper;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.helpers.TapHelper;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.helpers.TrackingStateHelper;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.Framebuffer;
@@ -91,7 +87,6 @@ public abstract class ARAssistantRenderer implements SampleRender.Renderer {
     // Rendering. The Renderers are created here, and initialized when the GL surface is created.
     public GLSurfaceView surfaceView;
 
-    public final SnackbarHelper messageSnackbarHelper = new SnackbarHelper();
     public DisplayRotationHelper displayRotationHelper;
     public TapHelper tapHelper;
     public SampleRender render;

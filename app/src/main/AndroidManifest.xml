@@ -20,6 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CNCMaintenance">
+        <meta-data android:name="com.google.ar.core">
+        </meta-data>
         <activity
             android:name=".MainActivity"
             android:exported="true"
