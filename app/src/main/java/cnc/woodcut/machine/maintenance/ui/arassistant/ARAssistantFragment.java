@@ -212,9 +212,9 @@ public class ARAssistantFragment extends Fragment {
                     } else {
                         message = SEARCHING_PLANE_MESSAGE;
                     }
-                    if (message == null) {
+                    /*if (message == null) {
                         messageSnackbarHelper.hide(this);
-                    } /*else {
+                    } *//*else {
                         messageSnackbarHelper.showMessage(this, message);
                     }*/
 
@@ -243,7 +243,7 @@ public class ARAssistantFragment extends Fragment {
                     // Use try-with-resources to automatically release the point cloud.
                     try (PointCloud pointCloud = frame.acquirePointCloud()) {
                         if (pointCloud.getTimestamp() > lastPointCloudTimestamp) {
-                            pointCloudVertexBuffer.set(pointCloud.getPoints());
+                            //pointCloudVertexBuffer.set(pointCloud.getPoints());
                             lastPointCloudTimestamp = pointCloud.getTimestamp();
                         }
                         Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
@@ -375,12 +375,12 @@ public class ARAssistantFragment extends Fragment {
                                                 "u_Color", new float[] {31.0f / 255.0f, 188.0f / 255.0f, 210.0f / 255.0f, 1.0f})
                                         .setFloat("u_PointSize", 5.0f);
                         // four entries per vertex: X, Y, Z, confidence
-                        pointCloudVertexBuffer =
-                                new VertexBuffer(render, /* numberOfEntriesPerVertex= */ 4, /* entries= */ null);
-                        final VertexBuffer[] pointCloudVertexBuffers = {pointCloudVertexBuffer};
-                        pointCloudMesh =
-                                new Mesh(
-                                        render, Mesh.PrimitiveMode.POINTS, /* indexBuffer= */ null, pointCloudVertexBuffers);
+                        //pointCloudVertexBuffer =
+                                //new VertexBuffer(render, /* numberOfEntriesPerVertex= */ 4, /* entries= */ null);
+                        //final VertexBuffer[] pointCloudVertexBuffers = {pointCloudVertexBuffer};
+                       // pointCloudMesh =
+                              //  new Mesh(
+                                       // render, Mesh.PrimitiveMode.POINTS, /* indexBuffer= */ null, pointCloudVertexBuffers);
 
                         // Virtual object to render (ARCore pawn)
                         virtualObjectAlbedoTexture =

@@ -22,7 +22,7 @@ import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistantFragment;
+import cnc.woodcut.machine.maintenance.ui.arassistant.ARAssistantRenderer;
 
 /** A SampleRender context. */
 public class SampleRender {
@@ -40,7 +40,7 @@ public class SampleRender {
    * @param renderer Renderer implementation to receive callbacks
    * @param assetManager AssetManager for loading Android resources
    */
-  public SampleRender(GLSurfaceView glSurfaceView, ARAssistantFragment renderer, AssetManager assetManager) {
+  public SampleRender(GLSurfaceView glSurfaceView, ARAssistantRenderer renderer, AssetManager assetManager) {
     this.assetManager = assetManager;
     glSurfaceView.setPreserveEGLContextOnPause(true);
     glSurfaceView.setEGLContextClientVersion(3);

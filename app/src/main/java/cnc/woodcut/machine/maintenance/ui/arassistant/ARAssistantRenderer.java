@@ -16,6 +16,7 @@ import android.view.Surface;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 
+import com.google.android.filament.VertexBuffer;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Frame;
@@ -40,7 +41,6 @@ import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.Mesh;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.SampleRender;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.Shader;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.Texture;
-import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.VertexBuffer;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.arcore.BackgroundRenderer;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.arcore.PlaneRenderer;
 import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.arcore.SpecularCubemapFilter;
