@@ -25,6 +25,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,17 +39,18 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-
 //ARCore
 import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Config;
+import com.google.ar.core.DepthPoint;
 import com.google.ar.core.Frame;
+import com.google.ar.core.HitResult;
 import com.google.ar.core.InstantPlacementPoint;
+import com.google.ar.core.LightEstimate;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Point;
 import com.google.ar.core.PointCloud;
 import com.google.ar.core.Session;
 import com.google.ar.core.Trackable;
@@ -94,14 +96,23 @@ import cnc.woodcut.machine.maintenance.ui.arassistant.common.samplerender.arcore
 public class ARAssistantFragment extends Fragment {
 
     private static final String TAG= ARAssistantFragment.class.getSimpleName();
+
+    // Point cloud
+    private VertexBuffer pointCloudVertexBuffer;
+    private Mesh pointCloudMesh;
+    private Shader pointCloudshader;
+    //private final TrackingStateHelper trackingStateHelper = new TrackingStateHelper(requireActivity());
     private final InstantPlacementSettings instantPlacementSettings = new InstantPlacementSettings();
     private boolean installRequested;
 
     private GLSurfaceView glSurfaceView;
     private ARAssistantRenderer arRenderer;
+    private SampleRender render;
+
     private Session session;
 
     private DisplayRotationHelper displayRotationHelper;
+    private TapHelper tapHelper;
 
     private final List<WrappedAnchor> wrappedAnchors = new ArrayList<>();
 
@@ -110,6 +121,9 @@ public class ARAssistantFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_arassistant, container, false);
         glSurfaceView = rootView.findViewById(R.id.glsurfaceview);
         displayRotationHelper = new DisplayRotationHelper(requireContext());
+
+        tapHelper = new TapHelper(requireContext());
+        glSurfaceView.setOnTouchListener(tapHelper);
 
         // Check camera permission
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -193,6 +207,9 @@ public class ARAssistantFragment extends Fragment {
                             // spam the logcat with this.
                         }
                     }
+                    // Handle one tap per frame.
+                    //handleTap(frame, camera);
+
                     // Keep the screen unlocked while tracking, but allow it to lock when tracking stops.
                     //trackingStateHelper.updateKeepScreenOnFlag(camera.getTrackingState());
 
@@ -241,7 +258,7 @@ public class ARAssistantFragment extends Fragment {
 
                     // Visualize tracked points.
                     // Use try-with-resources to automatically release the point cloud.
-                    try (PointCloud pointCloud = frame.acquirePointCloud()) {
+                    /*try (PointCloud pointCloud = frame.acquirePointCloud()) {
                         if (pointCloud.getTimestamp() > lastPointCloudTimestamp) {
                             //pointCloudVertexBuffer.set(pointCloud.getPoints());
                             lastPointCloudTimestamp = pointCloud.getTimestamp();
@@ -249,7 +266,7 @@ public class ARAssistantFragment extends Fragment {
                         Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
                         pointCloudShader.setMat4("u_ModelViewProjection", modelViewProjectionMatrix);
                         render.draw(pointCloudMesh, pointCloudShader);
-                    }
+                    }*/
 
                     // Visualize planes.
                     planeRenderer.drawPlanes(
@@ -261,7 +278,7 @@ public class ARAssistantFragment extends Fragment {
                     // -- Draw occluded virtual objects
 
                     // Update lighting parameters in the shader
-                    //updateLightEstimation(frame.getLightEstimate(), viewMatrix);
+                    updateLightEstimation(frame.getLightEstimate(), viewMatrix);
 
                     // Visualize anchors created by touch.
                     render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f);
@@ -298,6 +315,109 @@ public class ARAssistantFragment extends Fragment {
 
                     // Compose the virtual scene with the background.
                     backgroundRenderer.drawVirtualScene(render, virtualSceneFramebuffer, Z_NEAR, Z_FAR);
+                }//_End_onDrawFrame
+                // Handle only one tap per frame, as taps are usually low frequency compared to frame rate.
+                private void handleTap(Frame frame, Camera camera) {
+                    MotionEvent tap = tapHelper.poll();
+                    if (tap != null && camera.getTrackingState() == TrackingState.TRACKING) {
+                        List<HitResult> hitResultList;
+                        if (instantPlacementSettings.isInstantPlacementEnabled()) {
+                            hitResultList =
+                                    frame.hitTestInstantPlacement(tap.getX(), tap.getY(), APPROXIMATE_DISTANCE_METERS);
+                        } else {
+                            hitResultList = frame.hitTest(tap);
+                        }
+                        for (HitResult hit : hitResultList) {
+                            // If any plane, Oriented Point, or Instant Placement Point was hit, create an anchor.
+                            Trackable trackable = hit.getTrackable();
+                            // If a plane was hit, check that it was hit inside the plane polygon.
+                            // DepthPoints are only returned if Config.DepthMode is set to AUTOMATIC.
+                            if ((trackable instanceof Plane
+                                    && ((Plane) trackable).isPoseInPolygon(hit.getHitPose())
+                                    && (PlaneRenderer.calculateDistanceToPlane(hit.getHitPose(), camera.getPose()) > 0))
+                                    || (trackable instanceof Point
+                                    && ((Point) trackable).getOrientationMode()
+                                    == Point.OrientationMode.ESTIMATED_SURFACE_NORMAL)
+                                    || (trackable instanceof InstantPlacementPoint)
+                                    || (trackable instanceof DepthPoint)) {
+                                // Cap the number of objects created. This avoids overloading both the
+                                // rendering system and ARCore.
+                                if (wrappedAnchors.size() >= 20) {
+                                    wrappedAnchors.get(0).getAnchor().detach();
+                                    wrappedAnchors.remove(0);
+                                }
+
+                                // Adding an Anchor tells ARCore that it should track this position in
+                                // space. This anchor is created on the Plane to place the 3D model
+                                // in the correct position relative both to the world and to the plane.
+                                wrappedAnchors.add(new WrappedAnchor(hit.createAnchor(), trackable));
+                                // For devices that support the Depth API, shows a dialog to suggest enabling
+                                // depth-based occlusion. This dialog needs to be spawned on the UI thread.
+                                //this.runOnUiThread(this::showOcclusionDialogIfNeeded);
+
+                                // Hits are sorted by depth. Consider only closest hit on a plane, Oriented Point, or
+                                // Instant Placement Point.
+                                break;
+                            }
+                        }
+                    }
+                }
+                /** Update state based on the current frame's light estimation. */
+                private void updateLightEstimation(LightEstimate lightEstimate, float[] viewMatrix) {
+                    if (lightEstimate.getState() != LightEstimate.State.VALID) {
+                        virtualObjectShader.setBool("u_LightEstimateIsValid", false);
+                        return;
+                    }
+                    virtualObjectShader.setBool("u_LightEstimateIsValid", true);
+
+                    Matrix.invertM(viewInverseMatrix, 0, viewMatrix, 0);
+                    virtualObjectShader.setMat4("u_ViewInverse", viewInverseMatrix);
+
+                    updateMainLight(
+                            lightEstimate.getEnvironmentalHdrMainLightDirection(),
+                            lightEstimate.getEnvironmentalHdrMainLightIntensity(),
+                            viewMatrix);
+                    updateSphericalHarmonicsCoefficients(
+                            lightEstimate.getEnvironmentalHdrAmbientSphericalHarmonics());
+                    cubemapFilter.update(lightEstimate.acquireEnvironmentalHdrCubeMap());
+                }
+
+                private void updateMainLight(float[] direction, float[] intensity, float[] viewMatrix) {
+                    // We need the direction in a vec4 with 0.0 as the final component to transform it to view space
+                    worldLightDirection[0] = direction[0];
+                    worldLightDirection[1] = direction[1];
+                    worldLightDirection[2] = direction[2];
+                    Matrix.multiplyMV(viewLightDirection, 0, viewMatrix, 0, worldLightDirection, 0);
+                    virtualObjectShader.setVec4("u_ViewLightDirection", viewLightDirection);
+                    virtualObjectShader.setVec3("u_LightIntensity", intensity);
+                }
+
+                private void updateSphericalHarmonicsCoefficients(float[] coefficients) {
+                    // Pre-multiply the spherical harmonics coefficients before passing them to the shader. The
+                    // constants in sphericalHarmonicFactors were derived from three terms:
+                    //
+                    // 1. The normalized spherical harmonics basis functions (y_lm)
+                    //
+                    // 2. The lambertian diffuse BRDF factor (1/pi)
+                    //
+                    // 3. A <cos> convolution. This is done to so that the resulting function outputs the irradiance
+                    // of all incoming light over a hemisphere for a given surface normal, which is what the shader
+                    // (environmental_hdr.frag) expects.
+                    //
+                    // You can read more details about the math here:
+                    // https://google.github.io/filament/Filament.html#annex/sphericalharmonics
+
+                    if (coefficients.length != 9 * 3) {
+                        throw new IllegalArgumentException(
+                                "The given coefficients array must be of length 27 (3 components per 9 coefficients");
+                    }
+
+                    // Apply each factor to every component of each coefficient
+                    for (int i = 0; i < 9 * 3; ++i) {
+                        sphericalHarmonicsCoefficients[i] = coefficients[i] * sphericalHarmonicFactors[i / 3];
+                    }
+                    virtualObjectShader.setVec3Array(
+                            "u_SphericalHarmonicsCoefficients", sphericalHarmonicsCoefficients);
                 }
 
                 @Override
@@ -322,6 +442,7 @@ public class ARAssistantFragment extends Fragment {
 
                 @Override
                 public void onSurfaceCreated(SampleRender render) {
+                    Log.d(TAG,"onSurfaceCreated called");
                     // Prepare the rendering objects. This involves reading shaders and 3D model files, so may throw
                     // an IOException.
                     try {
@@ -376,12 +497,11 @@ public class ARAssistantFragment extends Fragment {
                                         .setFloat("u_PointSize", 5.0f);
                         // four entries per vertex: X, Y, Z, confidence
                         //pointCloudVertexBuffer =
-                                //new VertexBuffer(render, /* numberOfEntriesPerVertex= */ 4, /* entries= */ null);
+                               // new VertexBuffer(render, /* numberOfEntriesPerVertex= */ 4, /* entries= */ null);
                         //final VertexBuffer[] pointCloudVertexBuffers = {pointCloudVertexBuffer};
-                       // pointCloudMesh =
-                              //  new Mesh(
-                                       // render, Mesh.PrimitiveMode.POINTS, /* indexBuffer= */ null, pointCloudVertexBuffers);
-
+                         //pointCloudMesh =
+                             //  new Mesh(
+                                        //render, Mesh.PrimitiveMode.POINTS, /* indexBuffer= */ null, pointCloudVertexBuffers);
                         // Virtual object to render (ARCore pawn)
                         virtualObjectAlbedoTexture =
                                 Texture.createFromAsset(
@@ -423,12 +543,9 @@ public class ARAssistantFragment extends Fragment {
                         Log.e("OnSurfaceCreate", "Failed to read a required asset file", e);
                         //messageSnackbarHelper.showError(getActivity(), "Failed to read a required asset file: " + e);
                     }
-                }
-
+                }//_End_onSurfaceCreated
             };
-
             SampleRender render = new SampleRender(glSurfaceView, arRenderer, requireContext().getAssets());
-
         } catch (UnavailableException e) {
             Log.e("ARAssistantFragment", "ARCore not available", e);
         }
@@ -443,7 +560,6 @@ public class ARAssistantFragment extends Fragment {
         }
         return false;
     }
-
 
     @Override
     public void onDestroy() {
