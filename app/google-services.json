@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "460598744826",
+    "project_id": "machinear-207a5",
+    "storage_bucket": "machinear-207a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460598744826:android:9e3de807198f87f13bdb43",
+        "android_client_info": {
+          "package_name": "cnc.woodcut.ar.core.machine"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCUTPanCMsPyIbdxI5RVaoeTGUmG9TUz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460598744826:android:b8e9a4b8d6a85d773bdb43",
+        "android_client_info": {
+          "package_name": "cnc.woodcut.machine.maintenance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCUTPanCMsPyIbdxI5RVaoeTGUmG9TUz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
