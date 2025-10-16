@@ -94,7 +94,7 @@ private void setupAR() {
 
     private void loadModel() {
         ModelRenderable.builder()
-            .setSource(requireContext(), Uri.parse("models/machine_model.glb"))
+            .setSource(requireContext(), Uri.parse("models/machine.sfb")) //No RCB file at uri: models/machine_model.glb
             .build()
             .thenAccept(renderable -> modelRenderable = renderable)
             .exceptionally(throwable -> {

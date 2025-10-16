@@ -1,5 +1,5 @@
 {
-  "installationFolder": "C:\\Users\\xan938\\Projects\\19_AR\\solutions\\CNCMaintenance\\OpenCV4120\\build\\intermediates\\prefab_package\\release\\prefab",
+  "installationFolder": "/home/xan938/CNCMachineMaintenance/CNC-Machine-Maintenance/OpenCV4120/build/intermediates/prefab_package/release/prefab",
   "gradlePath": ":OpenCV4120",
   "packageInfo": {
     "packageName": "OpenCV4120",
@@ -8,7 +8,7 @@
     "modules": [
       {
         "moduleName": "opencv_jni_shared",
-        "moduleHeaders": "C:\\Users\\xan938\\Projects\\19_AR\\solutions\\CNCMaintenance\\OpenCV4120\\native\\jni\\include",
+        "moduleHeaders": "/home/xan938/CNCMachineMaintenance/CNC-Machine-Maintenance/OpenCV4120/native/jni/include",
         "moduleExportLibraries": [],
         "abis": []
       }
