@@ -2,9 +2,14 @@ package cnc.woodcut.machine.maintenance.ui.machines;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +18,10 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewFragment;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +38,9 @@ import cnc.woodcut.machine.maintenance.R;
 import cnc.woodcut.machine.maintenance.databinding.FragmentAssetBinding;
 import cnc.woodcut.machine.maintenance.databinding.ItemAssetBinding;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -55,6 +65,7 @@ public class AssetsFragment extends Fragment {
     private FragmentAssetBinding binding;
     private ValueCallback<Uri[]> filePathCallback;
     private static final int FILE_CHOOSER_REQUEST_CODE = 1001;
+    private WebView webView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -65,7 +76,7 @@ public class AssetsFragment extends Fragment {
         View root = binding.getRoot();
         /*---------For the "choose file"------------------*/
         View view = inflater.inflate(R.layout.fragment_asset, container, false);
-        WebView webView = view.findViewById(R.id.webview);
+        webView = view.findViewById(R.id.webview);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowFileAccess(true);
@@ -90,9 +101,26 @@ public class AssetsFragment extends Fragment {
 
         webView.loadUrl("file:///android_asset/cnc_maintenance_camera_app.html");
 
+        Button saveButton = view.findViewById(R.id.btnSavePdf);
+        saveButton.setOnClickListener(v -> showPrintUi("machineX_maintenance_report"));
+
         return view;
 
     }
+
+    private void showPrintUi(String jobName) {
+        PrintManager printManager = (PrintManager) requireContext().getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter = webView.createPrintDocumentAdapter(jobName);
+
+        PrintAttributes.Builder builder = new PrintAttributes.Builder();
+        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A4);
+        builder.setResolution(new PrintAttributes.Resolution("pdf", "pdf", 600, 600));
+        builder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
+
+        printManager.print(jobName, printAdapter, builder.build());
+    }
+
     /*---------For the "choose file"------------------*/
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -114,6 +142,4 @@ public class AssetsFragment extends Fragment {
         binding = null;
     }
 
-
-
-}
+}//end_AssetsFragment
