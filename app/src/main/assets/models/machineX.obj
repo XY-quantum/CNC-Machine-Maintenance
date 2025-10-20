@@ -1,0 +1,31 @@
+# Aspose.3D Wavefront OBJ Exporter
+# Copyright 2004-2025 Aspose Pty Ltd.
+# File created: 10/16/2025 22:43:22
+
+mtllib material.lib
+g obj_23750654
+
+#
+# object obj_23750654
+#
+
+v -10 0 -7.5
+v 10 0 -7.5
+v -10 0 7.5
+v 10 0 7.5
+# 4 vertices
+
+vn 0 1 0
+# 1 vertex normals
+
+vt 0 0 1
+vt 0 1 1
+vt 1 0 1
+vt 1 1 1
+# 4 texture coords
+
+usemtl mat_40852620
+s 1
+f 3/3/1 4/4/1 2/2/1 1/1/1
+#1 polygons
+

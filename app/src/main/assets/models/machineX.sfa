@@ -1,0 +1,49 @@
+{
+  materials: [
+    {
+      name: 'mat_40852620',
+      parameters: [
+        {
+          baseColor: 'machineX',
+        },
+        {
+          baseColorTint: [
+            0.80000000000000004,
+            0.80000000000000004,
+            0.80000000000000004,
+            1,
+          ],
+        },
+        {
+          metallic: 1,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: '../default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: '../../input/machineX.obj',
+    name: 'machineX',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: '../../input/machineX.jpg',
+      name: 'machineX',
+      pipeline_name: 'machineX.jpg',
+    },
+  ],
+  version: '0.54:2',
+}
