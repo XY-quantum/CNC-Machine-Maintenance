@@ -81,10 +81,10 @@ public class ARAssistantFragment extends ArFragment{
 
         ModelRenderable.builder()
                         //RenderableSource.builder()
-                                .setSource(getContext(), Uri.parse("models/sidePC.sfb"))
+                                .setSource(getContext(), Uri.parse("models/cnc_machine.sfb"))
                                 //.setRecenterMode(RenderableSource.RecenterMode.ROOT)
                                 //.build())
-                .setRegistryId("sidePC.sfb")
+                .setRegistryId("cnc_machine.sfb")
                 .build()
                 .thenAccept(renderable -> {
                     TransformableNode modelNode = new TransformableNode(getTransformationSystem());
@@ -149,18 +149,27 @@ public class ARAssistantFragment extends ArFragment{
         anchorNode.setParent(getArSceneView().getScene());
         Log.d("ARSetup","placeModelOnImage called");
         ModelRenderable.builder()
-                .setSource(requireContext(), Uri.parse("models/sidePC.sfb"))
+                .setSource(requireContext(), Uri.parse("models/cnc_machine" +
+                        ".sfb"))
                 .build()
                 .thenAccept(renderable -> {
                     TransformableNode modelNode = new TransformableNode(getTransformationSystem());
                     modelNode.setParent(anchorNode);
                     modelNode.setRenderable(renderable);
 
-                    // Scale model to fit image size (optional)
+                    // In the front of the objected image
+                    float imageDepthExtent = image.getExtentZ();
+                    float offsetDistance  = imageDepthExtent / 2.0f;
+                    modelNode.setLocalScale(new Vector3(0.0f, 0.0f, offsetDistance));
+
+                    // Scale model to fit image size (optional) on the image
                     float imageWidth = image.getExtentX();
                     float imageHeight = image.getExtentZ();
                     modelNode.setLocalScale(new Vector3(imageWidth, imageWidth, imageHeight));
 
+                    // Optional rotation
+                    //modelNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), -90));
+                    modelNode.getTranslationController();
                     modelNode.select();  // activate for gestures
                 })
                 .exceptionally(throwable -> {
