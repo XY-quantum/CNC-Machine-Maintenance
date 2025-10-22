@@ -56,6 +56,11 @@ public class ARAssistantFragment extends ArFragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        getPlaneDiscoveryController().hide();
+        getPlaneDiscoveryController().setInstructionView(null);
+        getArSceneView().getPlaneRenderer().setEnabled(false);
+
         // Use for testing the rendering 3D model
         getArSceneView().getScene().setOnTouchListener((hitTestResult, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
@@ -81,10 +86,10 @@ public class ARAssistantFragment extends ArFragment{
 
         ModelRenderable.builder()
                         //RenderableSource.builder()
-                                .setSource(getContext(), Uri.parse("models/cnc_machine.sfb"))
+                                .setSource(getContext(), Uri.parse("models/andy.sfb")) //for testing rendering 3D model
                                 //.setRecenterMode(RenderableSource.RecenterMode.ROOT)
                                 //.build())
-                .setRegistryId("cnc_machine.sfb")
+                .setRegistryId("andy.sfb")
                 .build()
                 .thenAccept(renderable -> {
                     TransformableNode modelNode = new TransformableNode(getTransformationSystem());
@@ -150,7 +155,7 @@ public class ARAssistantFragment extends ArFragment{
         Log.d("ARSetup","placeModelOnImage called");
         ModelRenderable.builder()
                 .setSource(requireContext(), Uri.parse("models/cnc_machine" +
-                        ".sfb"))
+                        ".sfb")) //cnc_machine size is good
                 .build()
                 .thenAccept(renderable -> {
                     TransformableNode modelNode = new TransformableNode(getTransformationSystem());
