@@ -14,10 +14,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.AugmentedImage;
@@ -30,6 +32,7 @@ import com.google.ar.core.Point;
 import com.google.ar.core.Session;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
+import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
@@ -61,8 +64,17 @@ public class ARAssistantFragment extends ArFragment{
         getPlaneDiscoveryController().setInstructionView(null);
         getArSceneView().getPlaneRenderer().setEnabled(false);
 
+        ImageButton settingsButton = view.findViewById(R.id.settings_button);
+        if (settingsButton == null) {
+            Log.e("YourFragment", "settingsButton is null! Check your layout XML.");
+            return; // Avoid crash
+        }
+
+        settingsButton.bringToFront();
+        //ViewCompat.setZ(settingsButton, 10f);
+
         // Use for testing the rendering 3D model
-        getArSceneView().getScene().setOnTouchListener((hitTestResult, motionEvent) -> {
+        /*getArSceneView().getScene().setOnTouchListener((hitTestResult, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 Frame frame = getArSceneView().getArFrame();
                 if (frame != null) {
@@ -78,7 +90,7 @@ public class ARAssistantFragment extends ArFragment{
                 }
             }
             return true;
-        });
+        });*/
     }
     private void placeModelAtAnchor(Anchor anchor) {
         AnchorNode anchorNode = new AnchorNode(anchor);
@@ -86,10 +98,10 @@ public class ARAssistantFragment extends ArFragment{
 
         ModelRenderable.builder()
                         //RenderableSource.builder()
-                                .setSource(getContext(), Uri.parse("models/andy.sfb")) //for testing rendering 3D model
+                                .setSource(getContext(), Uri.parse("models/machine.sfb")) //for testing rendering 3D model
                                 //.setRecenterMode(RenderableSource.RecenterMode.ROOT)
                                 //.build())
-                .setRegistryId("andy.sfb")
+                .setRegistryId("machine.sfb")
                 .build()
                 .thenAccept(renderable -> {
                     TransformableNode modelNode = new TransformableNode(getTransformationSystem());
@@ -105,10 +117,35 @@ public class ARAssistantFragment extends ArFragment{
     @Override
     public void onResume() {
         super.onResume();
-        // Disable plane discovery since we use Augmented Images
-        getPlaneDiscoveryController().hide();
-        getPlaneDiscoveryController().setInstructionView(null);
-        getArSceneView().getPlaneRenderer().setEnabled(false);
+        // No need to call getArSceneView().resume() here
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // No need to call getArSceneView().pause() here
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //@Override
+        //    public void onResume() {
+        //        super.onResume();
+        //        // No need to call getArSceneView().resume() here
+        //    }
+        //
+        //    @Override
+        //    public void onPause() {
+        //        super.onPause();
+        //        // No need to call getArSceneView().pause() here
+        //    }
+        //
+        //    @Override
+        //    public void onDestroy() {
+        //        super.onDestroy();
+        //        // No need to call getArSceneView().destroy() here
+        //    } No need to call getArSceneView().destroy() here
     }
 
     @Override
@@ -162,15 +199,15 @@ public class ARAssistantFragment extends ArFragment{
                     modelNode.setParent(anchorNode);
                     modelNode.setRenderable(renderable);
 
-                    // In the front of the objected image
-                    float imageDepthExtent = image.getExtentZ();
-                    float offsetDistance  = imageDepthExtent / 2.0f;
-                    modelNode.setLocalScale(new Vector3(0.0f, 0.0f, offsetDistance));
-
-                    // Scale model to fit image size (optional) on the image
+                    // Scale model to fit the image size uniformly
                     float imageWidth = image.getExtentX();
                     float imageHeight = image.getExtentZ();
-                    modelNode.setLocalScale(new Vector3(imageWidth, imageWidth, imageHeight));
+                    float scaleFactor = Math.min(imageWidth, imageHeight);
+                    modelNode.setLocalScale(new Vector3(scaleFactor, scaleFactor, scaleFactor));
+
+                    // Slightly elevate the model above the image plane for visibility
+                    Vector3 position = new Vector3(0.0f, scaleFactor * 0.1f, 0.0f);
+                    modelNode.setLocalPosition(position);
 
                     // Optional rotation
                     //modelNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), -90));

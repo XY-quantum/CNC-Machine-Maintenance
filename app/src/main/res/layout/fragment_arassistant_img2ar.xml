@@ -1,7 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_img2ar"
-    android:name="com.google.ar.sceneform.ux.ArFragment"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
+    android:layout_height="match_parent">
+
+    <!-- The ArFragment view is provided by your fragment class itself -->
+    <!--<fragment
+        android:id="@+id/fragment_img2ar"
+        android:name="com.google.ar.sceneform.ux.ArFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+
+    <ImageButton
+        android:id="@+id/settings_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="76dp"
+        android:src="@drawable/ic_settings" />
+
+</FrameLayout>
