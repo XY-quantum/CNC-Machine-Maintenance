@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav_sidepc"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/llContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Authentication/Login -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login to Remote Control"
+            android:textSize="20sp"
+            android:paddingBottom="8dp"/>
+        <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:inputType="textEmailAddress"
+            android:paddingBottom="8dp"/>
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingBottom="12dp"/>
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGIN"
+            android:paddingBottom="24dp"/>
+
+        <!-- Status displays -->
+        <TextView
+            android:id="@+id/tvAxisPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Real-time Motion Control Jogging axes, starting/stopping jobs. Monitoring key machine parameters"
+            android:textSize="18sp"
+            android:paddingBottom="12dp"/>
+        <TextView
+            android:id="@+id/tvSpindleTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Spindle Temp: 0.0 °C"
+            android:textSize="18sp"
+            android:paddingBottom="24dp"/>
+
+        <!-- Overrides -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Feed Override (%)"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etFeedOverride"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="100"
+            android:paddingBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Spindle Speed Override (%)"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/etSpindleOverride"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="100"
+            android:paddingBottom="24dp"/>
+
+        <!-- Jog controls -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jog Axes (mm)"
+            android:textSize="16sp"
+            android:paddingBottom="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="8dp">
+            <Button
+                android:id="@+id/btnJogXNeg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="X-" />
+            <Button
+                android:id="@+id/btnJogXPos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="X+" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="8dp">
+            <Button
+                android:id="@+id/btnJogYNeg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Y-" />
+            <Button
+                android:id="@+id/btnJogYPos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Y+" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="24dp">
+            <Button
+                android:id="@+id/btnJogZNeg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Z-" />
+            <Button
+                android:id="@+id/btnJogZPos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Z+" />
+        </LinearLayout>
+
+        <!-- Job control -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="12dp">
+            <Button
+                android:id="@+id/btnStartJob"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="START" />
+            <Button
+                android:id="@+id/btnPauseJob"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="PAUSE" />
+            <!--<Button
+                android:id="@+id/btnStopJob"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout-weight="1"
+                android:layout-height="wrap_content"
+                android:text="STOP" />-->
+        </LinearLayout>
+
+        <!-- Remote & camera selection -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Camera"
+            android:textSize="16sp"
+            android:paddingBottom="8dp"/>
+        <Spinner
+            android:id="@+id/spinnerCameraSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"/>
+        <Button
+            android:id="@+id/btnRemoteConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CONNECT REMOTE / VIEW CAMERA"
+            android:paddingBottom="12dp"/>
+
+        <!--<WebView
+            android:id="@+id/webViewCameraFeed"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="Camera feed"/> -->
+
+        <!-- Alerts dashboard -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alerts"
+            android:textSize="20sp"
+            android:paddingBottom="8dp"/>
+        <TextView
+            android:id="@+id/tvAlertList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:background="#eef0f0"
+            android:padding="8dp"/>
+
+        <Button
+            android:id="@+id/btnClearAlerts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CLEAR ALERTS"
+            android:paddingBottom="24dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp"/>
+    </LinearLayout>
+</ScrollView>

@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_asset" />
 
     <fragment
+        android:id="@+id/nav_sidepc"
+        android:name="cnc.woodcut.machine.maintenance.ui.sidepc.SidePCControllerFragment"
+        android:label="PC Controller"
+        tools:layout="@layout/fragment_sidepc" />
+
+    <fragment
         android:id="@+id/nav_dashboard"
         android:name="cnc.woodcut.machine.maintenance.ui.dashboard.DashboardFragment"
         android:label="Dashboard"

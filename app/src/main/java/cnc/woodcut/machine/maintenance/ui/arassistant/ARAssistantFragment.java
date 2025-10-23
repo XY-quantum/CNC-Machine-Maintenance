@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -199,20 +200,56 @@ public class ARAssistantFragment extends ArFragment{
                     modelNode.setParent(anchorNode);
                     modelNode.setRenderable(renderable);
 
-                    // Scale model to fit the image size uniformly
+                    // Get image extents
                     float imageWidth = image.getExtentX();
                     float imageHeight = image.getExtentZ();
                     float scaleFactor = Math.min(imageWidth, imageHeight);
+
+                    // Scale the model uniformly based on the image size
                     modelNode.setLocalScale(new Vector3(scaleFactor, scaleFactor, scaleFactor));
 
-                    // Slightly elevate the model above the image plane for visibility
-                    Vector3 position = new Vector3(0.0f, scaleFactor * 0.1f, 0.0f);
-                    modelNode.setLocalPosition(position);
+                    // Offset the model to the right side of the image (side-by-side)
+                    // X axis offset equals image width, Y is slightly up, Z is aligned
+                    Vector3 offsetPosition = new Vector3(imageWidth, scaleFactor * 0.1f, 0.0f);
+                    modelNode.setLocalPosition(offsetPosition);
 
                     // Optional rotation
                     //modelNode.setLocalRotation(Quaternion.axisAngle(new Vector3(1, 0, 0), -90));
                     modelNode.getTranslationController();
                     modelNode.select();  // activate for gestures
+                    // Create a new Node to attach the UI renderable
+                    Node uiNode = new Node();
+
+                    // Attach uiNode to the same anchorNode (the image anchor)
+                    uiNode.setParent(anchorNode);
+
+                    // Position uiNode next to the model, offset on X axis (e.g., double image width)
+                    uiNode.setLocalPosition(new Vector3(imageWidth * 2, scaleFactor * 0.3f, 0));
+                    ViewRenderable.builder()
+                            .setView(requireContext(), R.layout.fragment_arassistant_img2ar)
+                            .build()
+                            .thenAccept(viewRenderable -> {
+                                uiNode.setRenderable(viewRenderable);
+                                TextView textView = viewRenderable.getView().findViewById(R.id.ar_text_view);
+                                textView.setText("Virtual Control Panel : ");
+                            });
+
+                    // 2. Create the ViewRenderable (TextView)
+                    /*ViewRenderable.builder()
+                            .setView(requireContext(), R.layout.fragment_arassistant_img2ar)
+                            .build()
+                            .thenAccept(viewRenderable -> {
+                                Node textNode = new Node();
+                                textNode.setParent(anchorNode);
+                                textNode.setRenderable(viewRenderable);
+
+                                // Position the TextView above the model
+                                textNode.setLocalPosition(new Vector3(0.0f, scaleFactor * 0.3f, 0.0f));
+
+                                // Optionally, update the TextView text dynamically:
+                                TextView textView = viewRenderable.getView().findViewById(R.id.ar_text_view);
+                                textView.setText("Detected: " + image.getName());
+                            });*/
                 })
                 .exceptionally(throwable -> {
                     Log.e("ARSetup", "Model loading failed", throwable);

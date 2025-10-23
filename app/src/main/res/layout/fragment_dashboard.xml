@@ -59,6 +59,13 @@
             android:layout_height="wrap_content"
             android:text="Monthly"
             android:layout_marginStart="16dp"/>
+        <!-- Alerts dashboard -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alerts of servo loads, vibration sensors, machine health (if hardware supports)"
+            android:textSize="20sp"
+            android:paddingBottom="8dp"/>
     </LinearLayout>
 </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

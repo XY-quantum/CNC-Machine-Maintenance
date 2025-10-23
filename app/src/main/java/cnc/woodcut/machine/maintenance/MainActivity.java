@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
         if (navigationView != null) {
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_assets, R.id.nav_dashboard, R.id.nav_arassistant, R.id.nav_settings)
+                    R.id.nav_assets, R.id.nav_sidepc, R.id.nav_dashboard, R.id.nav_arassistant, R.id.nav_settings)
                     .setOpenableLayout(binding.drawerLayout)
                     .build();
             NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
