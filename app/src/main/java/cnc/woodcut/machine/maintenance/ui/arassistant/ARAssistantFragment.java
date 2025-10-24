@@ -65,15 +65,6 @@ public class ARAssistantFragment extends ArFragment{
         getPlaneDiscoveryController().setInstructionView(null);
         getArSceneView().getPlaneRenderer().setEnabled(false);
 
-        ImageButton settingsButton = view.findViewById(R.id.settings_button);
-        if (settingsButton == null) {
-            Log.e("YourFragment", "settingsButton is null! Check your layout XML.");
-            return; // Avoid crash
-        }
-
-        settingsButton.bringToFront();
-        //ViewCompat.setZ(settingsButton, 10f);
-
         // Use for testing the rendering 3D model
         /*getArSceneView().getScene().setOnTouchListener((hitTestResult, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {

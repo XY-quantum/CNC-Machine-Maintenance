@@ -21,12 +21,4 @@
         android:textColor="#FFFFFF"
         android:textSize="14sp"/>
 
-    <ImageButton
-        android:id="@+id/settings_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="76dp"
-        android:src="@drawable/ic_settings" />
-
 </LinearLayout>
