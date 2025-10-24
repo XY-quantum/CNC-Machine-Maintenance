@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -214,8 +215,10 @@ public class ARAssistantFragment extends ArFragment{
                     // Attach uiNode to the same anchorNode (the image anchor)
                     uiNode.setParent(anchorNode);
 
-                    // Position uiNode next to the model, offset on X axis (e.g., double image width)
-                    uiNode.setLocalPosition(new Vector3(imageWidth * 2, scaleFactor * 0.3f, 0));
+                    // Position uiNode behind the model, offset on X axis (e.g., double image width)
+                    uiNode.setLocalPosition(new Vector3(imageWidth * 1, scaleFactor * 0.3f, -0.1f));
+                    uiNode.setLocalScale(new Vector3(0.5f, 0.5f, 0.5f)); // scales UI down to 50%
+
                     ViewRenderable.builder()
                             .setView(requireContext(), R.layout.fragment_arassistant_img2ar)
                             .build()
@@ -223,6 +226,9 @@ public class ARAssistantFragment extends ArFragment{
                                 uiNode.setRenderable(viewRenderable);
                                 TextView textView = viewRenderable.getView().findViewById(R.id.ar_text_view);
                                 textView.setText("Virtual Control Panel : ");
+
+                                ImageView panelimg = viewRenderable.getView().findViewById(R.id.ar_panel_view);
+                                panelimg.setImageResource(R.drawable.panel);
                             });
 
                     // 2. Create the ViewRenderable (TextView)
