@@ -23,15 +23,28 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildFeatures {
         viewBinding true
     }
+    buildToolsVersion '34.0.0'
+    ndkVersion '27.0.12077973'
 }
 
 dependencies {
+    implementation ("com.google.guava:guava:32.1.2-android") // or latest version
+    // Chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    //ARCore
+    implementation("com.google.ar:core:1.50.0")
+    implementation("com.google.ar.sceneform:filament-android:1.15.0")
+    implementation("com.google.ar.sceneform.ux:sceneform-ux:1.15.0")
+    implementation("com.google.ar.sceneform:core:1.15.0")
+    // Obj - a simple Wavefront OBJ file loader
+    // https://github.com/javagl/Obj
+    implementation 'de.javagl:obj:0.4.0'
 
     implementation libs.appcompat
     implementation libs.material
@@ -43,6 +56,8 @@ dependencies {
     implementation libs.navigation.ui
     implementation project(':OpenCV4120')
     implementation libs.work.runtime
+    implementation libs.legacy.support.v4
+    //implementation libs.sceneform.ux
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

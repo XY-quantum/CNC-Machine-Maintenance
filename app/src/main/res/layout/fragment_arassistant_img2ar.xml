@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#FF5722"
+    android:padding="8dp"
+    android:orientation="vertical"
+    >
+
+    <!-- The ArFragment view is provided by your fragment class itself -->
+    <!--<fragment
+        android:id="@+id/fragment_img2ar"
+        android:name="com.google.ar.sceneform.ux.ArFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+    <TextView
+        android:id="@+id/ar_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ar_panel_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/machinex"
+        android:textColor="@color/black"
+        android:textSize="14sp"/>
+
+</LinearLayout>

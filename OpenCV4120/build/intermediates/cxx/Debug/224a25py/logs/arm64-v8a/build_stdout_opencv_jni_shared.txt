@@ -1,2 +1,0 @@
-ninja: Entering directory `C:\Users\xan938\Projects\19_AR\solutions\CNCMaintenance\OpenCV4120\.cxx\Debug\224a25py\arm64-v8a'
-ninja: no work to do.

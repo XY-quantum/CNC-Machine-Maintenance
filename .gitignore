@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+/OpenCV4120/build/
+.idea
+.build

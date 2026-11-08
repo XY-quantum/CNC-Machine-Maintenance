@@ -6,15 +6,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_assets"
-            android:icon="@drawable/ic_camera_black_24dp"
+            android:icon="@drawable/ic_slideshow_black_24dp"
             android:title="Assets" />
+        <item
+            android:id="@+id/nav_sidepc"
+            android:icon="@drawable/ic_slideshow_black_24dp"
+            android:title="PC Controller"
+            />
         <item
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_gallery_black_24dp"
             android:title="Dashboard" />
         <item
             android:id="@+id/nav_arassistant"
-            android:icon="@drawable/ic_slideshow_black_24dp"
+            android:icon="@drawable/ic_camera_black_24dp"
             android:title="AR Assistant" />
     </group>
 </menu>
