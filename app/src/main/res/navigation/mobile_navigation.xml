@@ -11,6 +11,16 @@
         android:label="Assets"
         tools:layout="@layout/fragment_asset" />
 
+        <action android:id="@+id/action_assetsFragment_to_calendarFragment"
+        app:destination="@id/nav_calendar" />
+
+    <!-- Calendar Destination -->
+    <fragment
+        android:id="@+id/nav_calendar"
+        android:name="cnc.woodcut.machine.maintenance.ui.machines.CalendarFragment"
+        android:label="Machine Schedule Calendar"
+        tools:layout="@layout/fragment_calendar" />
+
     <fragment
         android:id="@+id/nav_sidepc"
         android:name="cnc.woodcut.machine.maintenance.ui.sidepc.SidePCControllerFragment"

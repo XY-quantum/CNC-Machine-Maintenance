@@ -19,6 +19,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewFragment;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,10 +29,15 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.checkerframework.checker.units.qual.C;
 import org.opencv.android.OpenCVLoader;
 
 import cnc.woodcut.machine.maintenance.R;
@@ -67,6 +73,7 @@ public class AssetsFragment extends Fragment {
     private static final int FILE_CHOOSER_REQUEST_CODE = 1001;
     private WebView webView;
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         AssetsViewModel assetsViewModel =
@@ -76,6 +83,11 @@ public class AssetsFragment extends Fragment {
         View root = binding.getRoot();
         /*---------For the "choose file"------------------*/
         View view = inflater.inflate(R.layout.fragment_asset, container, false);
+
+        Button saveButton = view.findViewById(R.id.btnSavePdf);
+        // For Calendar view
+        Button calendarButton = view.findViewById(R.id.btnCalendar);
+
         webView = view.findViewById(R.id.webview);
 
         webView.getSettings().setJavaScriptEnabled(true);
@@ -98,14 +110,41 @@ public class AssetsFragment extends Fragment {
             }
 
         });
-
         webView.loadUrl("file:///android_asset/cnc_maintenance_camera_app.html");
 
-        Button saveButton = view.findViewById(R.id.btnSavePdf);
+        //View.OnClickListener buttonHandler = new View.OnClickListener() {
+        calendarButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                int clickedId = v.getId();
+
+                if (clickedId == R.id.btnCalendar) {
+                    Log.d("ButtonCheck", "Calendar button");
+
+                    NavController navController =
+                            NavHostFragment.findNavController(AssetsFragment.this);
+
+                    NavDestination currentDestination =
+                            navController.getCurrentDestination();
+
+                    if (currentDestination != null
+                            && currentDestination.getId() == R.id.nav_assets) {
+                        try {
+                            navController.navigate(
+                                   R.id.action_assetsFragment_to_calendarFragment
+                            );
+                        } catch (IllegalArgumentException e) {
+                            Log.e("NavError", "Navigation action not being found");
+                        }
+                    } else if (currentDestination != null) {
+                        Log.d("!null fragement name value", " " + getResources().getResourceName(currentDestination.getId()));
+                    }
+                }
+            }
+        });
         saveButton.setOnClickListener(v -> showPrintUi("machineX_maintenance_report"));
 
         return view;
-
     }
 
     private void showPrintUi(String jobName) {
